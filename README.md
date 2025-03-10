@@ -22,7 +22,7 @@ This project presents a comprehensive **Botnet Attacks Detection System** design
 6. [Botnet Attack Categories](#botnet-attack-categories)
 7. [Evaluation and Performance](#evaluation-and-performance)
 8. [Future Improvements](#future-improvements)
-9. [License](#license)
+9. [Contact](#contact)
 
 ---
 
