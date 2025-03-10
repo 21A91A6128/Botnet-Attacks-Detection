@@ -30,7 +30,17 @@ This project presents a comprehensive **Botnet Attacks Detection System** design
 
 To set up and run the application locally, follow these steps:
 
-### 1. **Create a Virtual Environment**
+### 1. **Clone the Repository**
+
+To get the project up and running locally, first clone the repository:
+
+```bash
+git clone https://github.com/21A91A6128/Botnet-Attacks-Detection.git
+cd Botnet-Attacks-Detection
+```
+
+### 2. **Create a Virtual Environment**
+
 It is recommended to create a virtual environment to isolate project dependencies:
 
 - For Linux/macOS:
@@ -45,7 +55,7 @@ It is recommended to create a virtual environment to isolate project dependencie
   venv\Scripts\activate
   ```
 
-### 2. **Install Required Libraries**
+### 3. **Install Required Libraries**
 
 Once the virtual environment is activated, install the necessary libraries by running the following command:
 
@@ -59,7 +69,7 @@ Alternatively, you can install the dependencies manually using:
 pip install Flask==2.2.2 Flask-Mail==0.10.0 scikit-learn tensorflow mysql-connector-python pandas numpy re==2.2.1 werkzeug joblib torch nltk
 ```
 
-### 3. **Set Up the Database**
+### 4. **Set Up the Database**
 
 If using **MySQL**, configure the database and user credentials. Alternatively, for local testing, you can use **SQLite**.
 
