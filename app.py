@@ -40,9 +40,7 @@ def before_request():
     if request.path.startswith('/static/'):
         return
     if 'logged_in' in session:
-        print("requested pathhhh1: ", request.path)
         if request.path not in ALLOWED_URLS:
-            print("requested pathhhh: ", request.path)
             session.pop('logged_in', None)
             session.pop('user_id', None)
             session.modified = True
@@ -66,10 +64,8 @@ def chatbot():
 @app.route('/get_response', methods=['POST'])
 def chat_response():
     user_message = request.json.get('message')
-    print(f"Received message: {user_message}")
     if user_message:
         response = get_response(user_message)
-        print(f"Bot response: {response}")
         return jsonify({"response": response})
     return jsonify({"response": "Sorry, I didn't understand that."})
 
@@ -80,8 +76,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = ''
-app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_USERNAME'] = 'YOUREMAIL'
+app.config['MAIL_PASSWORD'] = 'YOURAPPPASSWORD'
 mail = Mail(app)
 
 def sendEmailVerificationRequest(message,submsg,receiver,user):
@@ -250,32 +246,26 @@ def reset():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        # Extract session data
         email = session.get('email')
         current_otp = session.get('current_otp')
         otp_expiry = session.get('otp_expiry')
 
-        # Check if OTP has expired
         current_time = datetime.now(pytz.utc)
         if current_time > otp_expiry:
             msg = "OTP has expired. Please request a new one."
             return render_template('pwdreset.html', msg=msg, success=False)
 
-        # Validate the OTP entered by the user
         entered_otp = request.form.get('otp')
         if int(entered_otp) != int(current_otp):
             msg = "The OTP you entered is incorrect. Please check your email and try again."
             return render_template('pwdreset.html', msg=msg)
 
-        # If OTP is correct, reset password
         new_password = request.form.get('new_password')
         sql = "UPDATE users SET password=%s WHERE email=%s"
         val = (new_password, email)
         mycur.execute(sql, val)
         mydb.commit()
 
-        # Clear session variables after successful password reset
-        print("Clearing session data...")
         session.pop('current_otp', None)
         session.pop('email', None)
         session.pop('otp_expiry', None)
@@ -286,7 +276,6 @@ def reset():
         msg = "Password changed successfully! Please log in with your new password."
         return render_template('pwdreset.html', msg=msg, success=True)
 
-    # Render reset form if not POST request
     return render_template('pwdreset.html')
 
 
@@ -315,11 +304,9 @@ def submit_question():
 
     You have received a new support request regarding the Botnet Application.
 
-    🔹 **User Name:** {name}  
-    🔹 **Email:** {email}  
-    🔹 **Question:**  
-
-    {question}
+    🔹 User Name: {name}  
+    🔹 Email: {email}  
+    🔹 Question: {question}
 
     Please address this inquiry at the earliest convenience.
 
@@ -401,7 +388,6 @@ print(X_selected.columns)
 
 # Split the data
 from sklearn.model_selection import train_test_split
-
 X_train, X_test, y_train, y_test = train_test_split(X_selected, y, test_size=0.2, random_state=42)
 
 
@@ -428,10 +414,9 @@ def evaluate_model(model_name):
 @app.route('/get_accuracy', methods=['GET'])
 @login_required
 def get_accuracy():
-    model_name = request.args.get('model')  # Use 'model' query parameter for GET
-    print(model_name.upper())
+    model_name = request.args.get('model')
     accuracy = evaluate_model(model_name.upper())
-    return jsonify({'accuracy': accuracy})  # Return the accuracy as JSON
+    return jsonify({'accuracy': accuracy})
 
 @app.route('/algo', methods=['GET', 'POST'])
 @login_required
@@ -441,7 +426,6 @@ def algo():
     accuracy = ''
     if model_name:
         accuracy = {evaluate_model(model_name.upper())}
-    print("accuracy:",accuracy)
     return render_template('algo.html', accuracy=accuracy, model_name=model_name, user_name=user)
 
 
@@ -467,7 +451,6 @@ def prediction():
     if request.method == 'POST':
         try:
             selected_algorithm = request.form.get('algorithm')
-            print("model selected:", selected_algorithm)
             if not selected_algorithm:
                 return render_template('prediction.html', msg='No algorithm selected. Please select a valid algorithm.', user_name=user)
             if selected_algorithm == 'ANN':
