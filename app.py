@@ -5,7 +5,6 @@ from flask_mail import Mail, Message
 from sklearn.metrics import accuracy_score
 
 import sys
-# sys.path.append('../backend')
 from chat import get_response
 
 app = Flask(__name__)
@@ -37,7 +36,7 @@ mycur = mydb.cursor()
 
 @app.before_request
 def before_request():
-    ALLOWED_URLS = ['/viewdata', '/algo', '/prediction']
+    ALLOWED_URLS = ['/viewdata', '/algo', '/prediction', '/get_accuracy']
     if request.path.startswith('/static/'):
         return
     if 'logged_in' in session:
@@ -329,7 +328,7 @@ def submit_question():
     """
 
     try:
-        msg = Message(subject,  sender=app.config['MAIL_USERNAME'], recipients=['jaysairyali2004@gmail.com'], body=body)
+        msg = Message(subject,  sender=app.config['MAIL_USERNAME'], recipients=['MAIL_USERNAME'], body=body)
         mail.send(msg)
         return jsonify({"success": "Your message is on its way!"}), 200
     except Exception as e:
