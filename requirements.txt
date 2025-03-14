@@ -5,8 +5,7 @@ tensorflow
 mysql-connector-python
 pandas
 numpy
-re==2.2.1
-werkzeug
+werkzeug==2.2.2
 joblib
 torch
 nltk
