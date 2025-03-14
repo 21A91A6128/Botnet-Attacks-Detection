@@ -328,7 +328,7 @@ def submit_question():
     """
 
     try:
-        msg = Message(subject,  sender=app.config['MAIL_USERNAME'], recipients=['MAIL_USERNAME'], body=body)
+        msg = Message(subject,  sender=app.config['MAIL_USERNAME'], recipients=[app.config['MAIL_USERNAME']], body=body)
         mail.send(msg)
         return jsonify({"success": "Your message is on its way!"}), 200
     except Exception as e:
