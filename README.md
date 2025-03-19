@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project presents a comprehensive **Botnet Attacks Detection System** designed for **IoT environments** using a **hybrid machine learning model**. The system integrates multiple machine learning techniques, including **Artificial Neural Networks (ANN)**, **Recurrent Neural Networks (RNN)**, and **Long Short-Term Memory (LSTM)** networks, to detect and classify botnet activities effectively. A web application is developed to provide an intuitive interface for general users and authenticated users to interact with the detection models.
+This project presents a comprehensive **Botnet Attacks Detection System** designed for **IoT environments** using a **hybrid machine learning model**. The system integrates multiple machine learning techniques, including **Artificial Neural Networks (ANN)**, **Recurrent Neural Networks (RNN)**, and **Long Short-Term Memory (LSTM)** networks, to detect and classify botnet activities effectively. A **web application** is developed to provide an intuitive interface for general users and authenticated users to interact with the detection models.
 
 ### Features:
 - **User Registration and Login** for access control.
@@ -10,6 +10,7 @@ This project presents a comprehensive **Botnet Attacks Detection System** design
 - **Model Training** with ANN, RNN, and LSTM models, allowing users to select the best model based on performance.
 - **Real-time Prediction** for classifying network traffic as botnet or normal activity.
 - **LUCID Chatbot**: A conversational assistant integrated into the web application to guide users and answer queries.
+- **Dynamic Model Evaluation**: After training, the system provides performance metrics and dynamically suggests the best model for the dataset.
 
 ---
 
@@ -43,13 +44,13 @@ cd Botnet-Attacks-Detection
 
 It is recommended to create a virtual environment to isolate project dependencies:
 
-- For Linux/macOS:
+- For **Linux/macOS**:
   ```bash
   python3 -m venv venv
   source venv/bin/activate
   ```
 
-- For Windows:
+- For **Windows**:
   ```bash
   python -m venv venv
   venv\Scripts\activate
@@ -103,7 +104,7 @@ If using **MySQL**, configure the database and user credentials. Alternatively, 
 ### 2. **Model Training**
    - Logged-in users can upload datasets to train models.
    - Users can choose from available models (**ANN**, **RNN**, **LSTM**) for training.
-   - Model performance is assessed using metrics like accuracy, ROC-AUC, and PR-AUC, allowing users to select the best model based on performance.
+   - Model performance is assessed using metrics like accuracy, ROC-AUC, PR-AUC, and F1-score, allowing users to select the best model based on performance.
 
 ### 3. **Prediction Interface**
    - Users can input feature values to predict botnet activity.
@@ -116,6 +117,10 @@ If using **MySQL**, configure the database and user credentials. Alternatively, 
      - Guiding users through the application’s features.
      - Providing detailed information about the algorithms and models used in detection.
      - Assisting with dataset uploads, model training, and prediction steps.
+
+### 5. **Dynamic Model Evaluation**
+   - After training a model, the system dynamically evaluates its performance and provides feedback.
+   - The system presents key performance metrics and suggests which model is best suited for the user’s dataset.
 
 ---
 
@@ -180,6 +185,7 @@ These categories help to identify and classify different types of botnet activit
 - **Testing Accuracy**: 96.98%
 - **ROC-AUC Score**: 0.9934
 - **PR-AUC Score**: 0.9950
+- **Additional Metrics**: Precision, Recall, F1-Score, and Training Time.
 
 These performance metrics demonstrate that the hybrid machine learning model excels in detecting botnet activities in various IoT environments.
 
@@ -197,3 +203,7 @@ These performance metrics demonstrate that the hybrid machine learning model exc
 ### Contact
 
 For questions or suggestions, feel free to reach out to the project maintainers via [thecodexcipher@gmail.com].
+
+---
+
+This version of the README includes the updated **dynamic model evaluation**, more detailed explanations of the **machine learning models**, and improved formatting for clarity and structure. Let me know if you'd like to make further changes!
