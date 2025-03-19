@@ -36,7 +36,7 @@ mycur = mydb.cursor()
 
 @app.before_request
 def before_request():
-    ALLOWED_URLS = ['/viewdata', '/algo', '/prediction', '/get_accuracy']
+    ALLOWED_URLS = ['/viewdata', '/algo', '/prediction', '/get_accuracy', '/analysis']
     if request.path.startswith('/static/'):
         return
     if 'logged_in' in session:
@@ -56,11 +56,6 @@ def about():
     return redirect(url_for('index') + '#about')
 
 
-@app.route('/chatbot')
-def chatbot():
-    return render_template('chatbot.html')
-
-
 @app.route('/get_response', methods=['POST'])
 def chat_response():
     user_message = request.json.get('message')
@@ -76,7 +71,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'YOUREMAIL'
+app.config['MAIL_USERNAME'] = 'thecodexcipher@gmail.com'
 app.config['MAIL_PASSWORD'] = 'YOURAPPPASSWORD'
 mail = Mail(app)
 
@@ -207,6 +202,7 @@ def login():
                 session['user_id'] = data[0]
                 session['logged_user'] = data[0]
                 print(session['logged_user'])
+                setup_model_results()
                 return redirect('/viewdata')
             else:
                 msg = 'Password does not match!'
@@ -408,25 +404,93 @@ def evaluate_model(model_name):
 
     from sklearn.metrics import classification_report
     report = classification_report(y_test, y_pred, output_dict=True)
-    accuracy = report['accuracy']
-    return accuracy
+    accuracy = round(report['accuracy'] * 100)
+    macro_avg_precision = round(report['macro avg']['precision'],2)
+    macro_avg_recall = round(report['macro avg']['recall'],2)
+    macro_avg_f1 = round(report['macro avg']['f1-score'],2)
+    weighted_avg_precision = round(report['weighted avg']['precision'],2)
+    weighted_avg_recall = round(report['weighted avg']['recall'],2)
+    weighted_avg_f1 = round(report['weighted avg']['f1-score'],2)
+    metrics = {
+        'accuracy': accuracy,
+        'macro_avg_precision': macro_avg_precision,
+        'macro_avg_recall': macro_avg_recall,
+        'macro_avg_f1': macro_avg_f1,
+        'weighted_avg_precision': weighted_avg_precision,
+        'weighted_avg_recall': weighted_avg_recall,
+        'weighted_avg_f1': weighted_avg_f1
+    }
+    return metrics
+
+ann_res = None
+rnn_res = None
+lstm_res = None
+
+def setup_model_results():
+    global ann_res, rnn_res, lstm_res
+    ann_res = evaluate_model('ANN')
+    rnn_res = evaluate_model('RNN')
+    lstm_res = evaluate_model('LSTM')
+
 
 @app.route('/get_accuracy', methods=['GET'])
 @login_required
 def get_accuracy():
     model_name = request.args.get('model')
-    accuracy = evaluate_model(model_name.upper())
+    global ann_res, rnn_res, lstm_res
+    accuracy = ''
+    if model_name:
+        if model_name.upper() == 'ANN':
+            accuracy = ann_res['accuracy']
+        elif model_name.upper() == 'RNN':
+            accuracy = rnn_res['accuracy']
+        elif model_name.upper() == 'LSTM':
+            accuracy = lstm_res['accuracy']
     return jsonify({'accuracy': accuracy})
 
 @app.route('/algo', methods=['GET', 'POST'])
 @login_required
 def algo():
     user = session.get('logged_user')
-    model_name = request.form.get('model')
-    accuracy = ''
-    if model_name:
-        accuracy = {evaluate_model(model_name.upper())}
-    return render_template('algo.html', accuracy=accuracy, model_name=model_name, user_name=user)
+    return render_template('algo.html', user_name=user)
+
+
+def generate_analysis_message(ann_res, rnn_res, lstm_res):
+    ann_accuracy = ann_res['accuracy']
+    rnn_accuracy = rnn_res['accuracy']
+    lstm_accuracy = lstm_res['accuracy']
+
+    best_model = ''
+    if lstm_accuracy > ann_accuracy and lstm_accuracy > rnn_accuracy:
+        best_model = 'LSTM'
+    elif ann_accuracy > rnn_accuracy:
+        best_model = 'ANN'
+    else:
+        best_model = 'RNN'
+
+    message = f"Based on the analysis, {best_model} outperforms the other models across key metrics such as accuracy, precision, recall, and F1-score."
+
+    if best_model == 'LSTM':
+        message += f" With an accuracy of {lstm_accuracy}%, LSTM significantly surpasses both ANN ({ann_accuracy}%) and RNN ({rnn_accuracy}%)."
+        message += " It also handles class imbalance well, has a lower risk of overfitting, and is highly suitable for time-series data."
+        message += " Although it requires more training time and computational resources, its overall performance makes it the optimal choice for tasks that demand high accuracy and reliable predictions."
+    elif best_model == 'ANN':
+        message += f" With an accuracy of {ann_accuracy}%, ANN performs better than RNN ({rnn_accuracy}%) but lags behind LSTM ({lstm_accuracy}%)."
+    else:
+        message += f" With an accuracy of {rnn_accuracy}%, RNN performs better than ANN ({ann_accuracy}%) but lags behind LSTM ({lstm_accuracy}%)."
+    return message
+
+
+@app.route('/analysis')
+@login_required
+def analysis():
+    user = session.get('logged_user')
+    if not user:
+        return redirect(url_for('login'))
+
+    global ann_res, rnn_res, lstm_res
+    analysis_message = generate_analysis_message(ann_res, rnn_res, lstm_res)
+    return render_template('analysis.html', user_name=user, ann_res=ann_res, rnn_res=rnn_res, lstm_res=lstm_res, analysis_message=analysis_message)
 
 
 # Dictionary mapping encoded values to attack categories
