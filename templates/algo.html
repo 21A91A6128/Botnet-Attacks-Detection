@@ -187,7 +187,7 @@
             background: rgba(0, 0, 0, 0.9);
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(30, 144, 255, 0.6);
-            text-align: left;
+            text-align: justify;
             width: 85%; /* Set width to match .algo-section */
             max-width: 1200px; /* Optional: same max-width as .algo-section */
             margin-left: auto; /* Center it horizontally */
@@ -270,6 +270,7 @@
             <ul>
                 <li><a href="{{ url_for('viewdata') }}">View Data</a></li>
                 <li class="active"><a href="{{ url_for('algo') }}">Algorithm</a></li>
+                <li><a href="{{ url_for('analysis') }}">Analysis</a></li>
                 <li><a href="{{ url_for('prediction') }}">Prediction</a></li>
                 <li><a href="{{ url_for('logout') }}">Logout</a></li>
             </ul>
@@ -341,7 +342,8 @@
         }
 
         function updateAccuracyDisplay(accuracy) {
-            const accuracyPercentage = accuracy * 100;
+            const accuracyPercentage = accuracy;
+            console.log(accuracyPercentage)
             let existingAccuracyContainer = document.querySelector('.accuracy-container');
             if (existingAccuracyContainer) {
                 existingAccuracyContainer.remove();
@@ -373,10 +375,10 @@
 
             // Update the water level and text every 30ms
             const interval = setInterval(() => {
-                if (currentHeight < targetHeight) {
+                if (currentHeight <= targetHeight) {
                     currentHeight += increment;
                     accuracyWater.style.height = `${currentHeight}%`;
-                    accuracyText.textContent = `${Math.round(currentHeight)}%`;
+                    accuracyText.textContent = `${Math.min(Math.round(currentHeight), targetHeight)}%`;
                 } else {
                     clearInterval(interval); // Stop the animation once target height is reached
                 }
